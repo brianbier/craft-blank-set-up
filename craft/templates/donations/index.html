@@ -1,0 +1,81 @@
+{% extends "_layout" %}
+{% set seoTitle = entry.title %}
+
+
+{% block content %}
+  <section>
+    <form action="donations/payment" method="GET">
+      <div class="row">
+          <div class="col-md-8 offset-md-4">
+          <h4>Choose Your Donation Amount</h4>
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-check">
+                  <label class="form-check-label form-group">
+                    <input class="form-check-input" type="radio" name="amount" value="10">
+                    $10
+                  </label>
+                </div>
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="amount" value="20">
+                    $20
+                  </label>
+                </div>
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="amount" value="30">
+                    $30
+                  </label>
+                </div>
+                <div class="radio">
+                  <label>Other Amount
+                    <input type="number" class="form-control" name="customAmount" id="customAmount">
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-3 col-xs-7">
+                <div class="form-check">
+                  <label class="form-check-label">
+                  <input class="form-check-input" type="radio" name="amount" value="50">
+                  $80
+                  </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="amount" value="100">
+                    $100
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="amount" value="200">
+                    $200
+                    </label>
+                </div>
+                <fieldset class="form-group">
+                  <label for="planInterval" class="control-label">Plan Interval</label>
+                  <select class="form-control" id="planInterval" name="planInterval">
+                    <option value="">One-Off</option>
+                    <option value="week">Weekly</option>
+                    <option value="month">Monthly</option>
+                    <option value="year">Yearly</option>
+                  </select>
+                </fieldset>
+              </div>
+            </div>
+          <button type="submit" class="btn btn-primary">Donate Now</button>
+        </div>
+      </div>
+    </form>
+  </section>
+  {% includeJsFile resourceUrl('charge/js/stripe_v2.min.js') %}
+   {% includeJsFile resourceUrl('charge/js/jquery.charge.js') %}
+   {% includejs %}
+
+     (function(window, undefined) {
+             Stripe.setPublishableKey('{{ craft.charge.getPublicKey() }}');
+             $(this).charge('#charge-form', '#payment-errors');
+     })(window);
+   {% endincludejs %}
+{% endblock %}

@@ -1,0 +1,38 @@
+ {% extends '_layout' %}
+
+{% set seoTitle = entry.title %}
+
+  {% block content %}
+  <section>
+    <div class="conatiner">
+    {% if entry.boardMatrix | length %}
+      {% for matrixBlock in entry.boardMatrix %}
+        {% switch matrixBlock.type %}
+        {% case "board" %}  
+        <h1>{{ matrixBlock.boardName }}</h1>
+          <div class="row">
+            <div class="col-md-8">
+                {{matrixBlock.body}}
+            </div>
+          </div>
+          <div class="card-columns">
+          {% for boardMember in matrixBlock.boardMembers %}
+                <div class="card ">
+                  <div class="card-block">
+                    <h4 class="card-title">{{ boardMember.firstName }} {{ boardMember.lastName }}</h4>
+                    <ul>
+                        <li class="card-link">{{ boardMember.jobTitle }}</li>
+                        <li class="card-text">{{ boardMember.boardTitle }}</li>
+                        <li class="card-link">{{ boardMember.organization }}</li>
+                    </ul>
+                  </div>
+                </div>
+            {% endfor %}
+            </div>
+        {% endswitch %}
+      {% endfor %}
+    {% endif %}
+    </div>
+  </section>
+{% endblock %} 
+

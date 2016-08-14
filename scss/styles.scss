@@ -1,0 +1,24 @@
+
+@import '../public/bower_components/bootstrap/scss/bootstrap.scss';
+@import 'flickity';
+@import 'slideshow';
+@import 'events';
+@import 'press';
+
+
+
+body {
+  background-color: white;
+}
+
+a,p {
+    word-wrap: break-word;
+}
+footer{
+  background-color: #373a3c;
+  color: gray;
+  padding: 20px;
+  a{
+    color: gray;
+  }
+}

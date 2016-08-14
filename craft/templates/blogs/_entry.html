@@ -1,0 +1,26 @@
+{% extends '_layout' %}
+{% set illustration = entry.featureImages| length ? entry.featureImages[0].url : null %}
+
+{% set seoTitle = entry.title %}
+{% set seoDescription = entry.body %}
+{% set seoImage = illustration %}
+{% set category = null %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-3">
+      {% include "_includes/category-nav.html" with {categoryGroup: 'blogs'} %}
+    </div>
+    <div class="col-md-9">
+      <section>
+        <a href="{{ entry.url }}"><h1>{{ entry.title }}</h1></a>
+          {% if entry.featureImages | length %}
+            {% include "_includes/flickity-slider.html" with {images: entry.featureImages  } %} 
+          {% endif %}
+          {{ entry.body }}   
+             {% include "_includes/matrix.html" with {type: entry } %} 
+      </section> 
+    </div>
+  </div>
+
+{% endblock %}

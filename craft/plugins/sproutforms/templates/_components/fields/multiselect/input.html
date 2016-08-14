@@ -1,0 +1,35 @@
+{%- set type     = field.type|lower %}
+{%- set data     = renderingOptions.data is defined ? renderingOptions.data : null %}
+{%- set id       = renderingOptions.id is defined ? renderingOptions.id : name %}
+{%- set class    = renderingOptions.class is defined ? renderingOptions.class : name %}
+{%- set values   = value is defined ? value : [] %}
+{%- set required = field.required is defined and field.required ? " required" %}
+{%- set options  = settings.options is defined ? settings.options : [] %}
+
+{%- set dataAttributes = null %}
+{%- for key, dataValue in data %}
+	{%- set dataAttributes = dataAttributes ~ ' data-'~key~'="'~dataValue~'"' %}
+{% endfor -%}
+
+{% spaceless %}
+
+<div class="select-wrapper">
+	<h6>{{- field.name|raw -}}<span class="caret"></span></h6>
+	<select multiple {%- if class %} class="{{ class }}" {% endif %}
+		{%- if id %} id="{{ id }}"{% endif %}
+		{%- if name %} name="{{ name }}"{% endif %}
+		{{- required -}}
+		{{- dataAttributes|raw -}}
+		>
+		{%- for key, option in options -%}
+
+			{%- set optionLabel = (option.label is defined ? option.label : null) -%}
+			{%- set optionValue = (option.value is defined ? option.value : key) -%}
+
+			<option value="{{ optionValue }}" {% if optionValue == value %}selected{% endif %}>{{ optionLabel }}</option>
+		{% endfor %}
+
+	</select>
+</div>
+
+{% endspaceless %}

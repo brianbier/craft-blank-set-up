@@ -1,0 +1,70 @@
+{% extends '_layout' %}
+{% set relatedEvents = craft.entries.section('events').relatedTo(entry.eventCategory).id('not ' ~ entry.id ) %}
+{% set todayStartDate = "now"|date_modify("midnight") %}     
+{% set todayEndDate = "now"|date_modify("+1 day")|date_modify("midnight") %} 
+{% set relatedUpcomingEvents = relatedEvents.endDate(">=" ~ todayEndDate.timestamp ).order('startDate asc') %}
+{% set category = null %}
+
+{% set illustration = entry.featureImages| length ? entry.featureImages[0].url : null %}
+{% set seoTitle = entry.title %}
+{% set seoDescription = entry.body %}
+{% set seoImage = illustration %}
+{% set category = null %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-3">
+    {% include "_includes/category-nav.html" with {categoryGroup: 'events'} %} 
+    </div>
+
+    <div class="col-md-6">
+      <section>
+          {% if entry.featureImages | length %}
+            {% include "_includes/flickity-slider.html" with {images: entry.featureImages  } %} 
+          {% endif %}
+        <a href="{{ entry.url }}"><h1>{{ entry.title }}</h1></a>
+        <p>{{entry.startDate | date("l, F d, Y")}} - {{entry.endDate | date("l, F d, Y")}}</p>
+        {{ entry.body }}
+      </section>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 offset-md-3">
+      <h2>Location</h2>
+      <p>
+      {{ entry.addressSmartMap.street1}}<br>
+      {{ entry.addressSmartMap.city}},
+      {{ entry.addressSmartMap.state}},
+      {{ entry.addressSmartMap.zip}}
+      <p>
+      {% set options = {
+          height: 300,
+          zoom: 18,
+          draggable: true,
+          scrollwheel: true,
+          infoWindowOptions: {
+          maxWidth: 200
+        }
+      } %}
+      {{ craft.smartMap.map(entry.addressSmartMap, options) }}
+    </div>
+      <div class="col-md-5">
+        {% for relatedUpcoming in relatedUpcomingEvents %}
+          <article>
+          <h2>Related Fields</h2>
+            <a href="{{relatedUpcoming.url}}">
+              <h3>{{ relatedUpcoming.title }}</h3>
+            </a>
+            <p>{{relatedUpcoming.startDate | date("l, F d, Y g:i a")}} - {{relatedUpcoming.endDate | date("l, F d, Y g:i a")}}</p>
+            {{ relatedUpcoming.body }}
+            <ul>
+            {% for category in relatedUpcoming.eventCategory %}
+              <li>{{category}}</li>{% if not loop.last %} /{% endif %} 
+            {% endfor %}
+            </ul>
+          </article>
+        {% endfor %} 
+      </div>
+  </div>
+{% endblock %}

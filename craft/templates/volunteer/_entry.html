@@ -1,0 +1,49 @@
+{% extends '_layout'%}
+{% set illustration = entry.image| length ? entry.image[0].url : null %}
+
+{% set seoTitle = entry.title %}
+{% set seoDescription = entry.body %}
+{% set seoImage = illustration %}
+  
+{% block content %}
+  <div class="row">
+      <div class="col-md-4">
+          {% include "_includes/entry-nav.html" with {entrySection: 'volunteer'} %} 
+      </div>
+    <article>
+      <div class="col-md-6">
+        <a href="{{ entry.url }}"><h1>{{ entry.title }}</h1></a>
+        {% if entry.image | length %}
+            {% include "_includes/flickity-slider.html" with {images: entry.image  } %} 
+        {% endif %}
+      </div>
+    </article>
+  </div>
+      <div class="row">
+          <div class="col-md-4">
+            <aside>
+              {% if entry.relatedLocations | length %}
+                <h2>Volunteer Locations</h2>
+                  {% for locationEntry in entry.relatedLocations %}
+                    <div class="card card-block">
+                      <a href="{{locationEntry.url}}"><p>{{ locationEntry.title }}</p></a>
+                      <hr>
+                      <p>
+                      {{ locationEntry.addressSmartMap.street1 }}<br />
+                      {{ locationEntry.addressSmartMap.city }},
+                      {{ locationEntry.addressSmartMap.state }},
+                      {{ locationEntry.addressSmartMap.zip }}<br />
+                      {{ locationEntry.contactPhone }}
+                      </p>
+                    </div>
+                  {% endfor %}
+              {% endif %}
+            </aside>
+          </div>
+        <div class="col-md-7">
+          <article>
+          {{ entry.body }}    
+          </article>
+        </div>
+    </div>
+{% endblock %}

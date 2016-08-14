@@ -1,0 +1,30 @@
+{% extends '_layout' %}
+
+{% set seoTitle = entry.title %}
+{% set seoDescription = entry.overview %}
+
+
+{% set category = null %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-md-3">
+        {% include '_includes/category-nav.html' with {categoryGroup: 'career'}%}
+      </div>
+      <div class="col-md-6">
+        <article>
+          <h1>{{entry.title}}</h1>
+          <br>
+          <h2>Overview</h2>
+          {{entry.overview}}
+          <h2>Responsibilities</h2>
+          {{entry.responsiblity}}
+          <h2>Qualifications</h2>
+          {{entry.qualification}}
+          {% if entry.externalLink %}
+          <a href="{{entry.externalLink}}">Click Here to Apply</a>
+          {% endif %}
+        </article>
+      </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends '_layout' %}
+{% set illustration = entry.publicationImage| length ? entry.publicationImage[0].url : null %}
+{% set seoTitle = entry.title %}
+{% set seoDescription = entry.body %}
+{% set seoImage = illustration %}
+{% set category = null %}
+  
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+          <nav>
+            {% include "_includes/category-nav.html" with {categoryGroup:'press'} %}
+            {% if category is defined %}
+              <ul class="nav nav-pills nav-stacked">
+                <li class="nav-item">
+                  <a href="{{siteUrl}}press/press-releases" }}">Press Release</a>
+                  
+                </li>
+              </ul>
+            {% endif %}
+          </nav>
+        </div>
+          <div class="col-md-6">
+            <section>
+              <div class="container">
+              <h1>{{ entry.title }}</h1>
+                {% if entry.publicationImage| length %}
+                  {% include "_includes/flickity-slider.html" with {images: entry.publicationImage } %} 
+                {% endif %}
+                <p>Posted on {{entry.date.getTimestamp()| date(" F d, Y h:i A")}}</p> 
+                {{ entry.body }}
+              </div>
+            </section>
+          </div>
+        <h3>Other Press Releases</h3>
+        <div class="col-md-3">
+          <aside>
+              <ul class="media-list">
+                {% for entry in craft.entries.section('pressRelease').id('not ' ~ entry.id) %}
+                  <li class="media">
+                    <div class="media-body">
+                        <a href="{{ entry.url }}"><p>{{ entry.title }}</p></a>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+          </aside>
+        </div>
+    </div>
+{% endblock %}

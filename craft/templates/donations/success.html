@@ -1,0 +1,33 @@
+{% extends '_layout' %}
+{% set hash = craft.request.getSegment(3) %}
+{% if charge is not defined %}
+    {% set charge = craft.charge.charges.hash(hash).first() %}
+{% endif %}
+{# {% set charges = craft.charge.getChargesByUser %} #}
+{% set customer = craft.charge.customer %}
+{% set meta = charge.meta %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-5 offset-md-3">
+    <div class="card card-block">
+      {% if charge is defined %}
+        <h5 class="card-title">Thanks {{ meta.firstName }} {{meta.lastName}} for your donation of ${{ charge.amount }} </h5>
+        <hr>
+        <p class="card-text">Date: {{charge.dateCreated | date("F d, Y")}}</p>
+        <p class="card-text">Reference number: {{charge.hash}}</p>
+        <p class="card-text">
+          Address<br>
+          {{charge.cardAddressLine1}}<br>
+          {{charge.cardAddressCity}}, {{charge.cardAddressState}} {{charge.cardAddressZip}}<br>
+          Last four of digits of card used: {{ charge.cardLast4 }}
+          
+        </p>
+        <p class="card-text"><strong>Total Donation: ${{charge.amount}}</strong></p>
+        <a href="/volunteer" class="card-link"><h4>Check out our volunteer Page</h4></a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

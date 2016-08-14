@@ -1,0 +1,17 @@
+.carousel-cell {
+  width: 100%; /* full width */
+  height: 300px; /* height of carousel */
+  margin:20px;
+  margin-right: 10px;
+    .cell-inner{
+      background-size: cover;
+      background-position: center center;
+      height: 100%;
+      h2, p {
+        background-color:white;        
+      }
+    }
+}
+.flickity-page-dots{
+  margin-bottom: 20px;
+}

@@ -1,0 +1,14 @@
+{
+  "local": {
+    "dbName": "housingworks_craft",
+    "host": "localhost",
+    "user":"root",
+    "pass":""
+  },
+  "stage": {
+    "dbName": "housingworks_craft",
+    "host": "localhost",
+    "user":"",
+    "pass":""
+  }
+}

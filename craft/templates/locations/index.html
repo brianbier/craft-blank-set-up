@@ -1,0 +1,78 @@
+{% extends '_layout'%}
+{% set days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %}
+{% if category is defined %}
+  {% set seoTitle = category.title %}
+  {% set locations = craft.entries.section('locations').relatedTo(category) %}
+{% else %}
+{% set seoTitle = 'locations' %}
+  {% set locations = craft.entries.section('locations') %}
+  {% set category = null %}
+{% endif %}
+
+{% if locations | length == 1 %}
+  {% redirect "locations/" ~ locations.first().slug %}
+{% endif %}
+
+{% block content %}
+  <div class="row">
+      <div class="col-md-3">
+        <nav>
+        {% include "_includes/category-nav.html" with {categoryGroup:'locations'}%}
+        </nav>
+      </div>
+    <div class="col-md-6">
+        {% if locations | length %}
+        {% paginate locations.limit(2) as locationEntries %}
+          {% for location in locationEntries %}
+            <article>
+              <div class="card card-block">
+                  <a href="{{ location.url }}"><h3 class="card-title">{{ location.title }}</h3></a>
+                  {{ location.body }}
+                  <p>
+                    {{ location.addressSmartMap.street1}}<br />
+                    {{ location.addressSmartMap.city}},
+                    {{location.addressSmartMap.state}},
+                    {{location.addressSmartMap.zip}}<br />
+                    {{ location.contactPhone }}
+                  </p>
+
+                  {% for dayHours in location.storeHours %}
+                    <p>
+                      {{ days[loop.index0] }}: 
+                      {% if dayHours.open| length %} 
+                          {{ dayHours.open| date("g:i a") }} - {{ dayHours.close|date("g:i a") }}
+                      {% else %}
+                          CLOSED 
+                      {% endif %}
+                    </p>
+                  {% endfor %}
+                  <a href="{{ location.url }}" class="btn btn-primary">Visit Location</a>
+              </div>
+            </article>
+          {% endfor %}
+          {% include "_includes/pagination-pages.html" %}
+        {% endpaginate %}
+      {% endif %}
+    </div>
+    <div class="col-md-3">
+        {% if locations.smartMap | length < 5 %}
+            {% set zoom = 10 %}
+        {% else %}
+            {% set zoom = 4 %}
+        {% endif %}
+
+        {% set options = {
+            height: 500,
+            zoom: zoom,
+            draggable: true,
+            scrollwheel: true,
+            infoWindowOptions: {
+            maxWidth: 700
+          }
+        } %}
+        <aside>
+          {{ craft.smartMap.map(locations, options) }}
+        </aside>
+    </div>
+  </div>
+{% endblock %}

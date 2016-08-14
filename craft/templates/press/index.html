@@ -1,0 +1,86 @@
+{% extends '_layout' %}
+{% if category is defined %}
+  {% set pressCoverage = craft.entries.section('pressCoverage').relatedTo(category) %}
+    {% set seoTitle = category.title %}
+{% else %}
+  {% set singleEntry = craft.entries.section('press') %}
+  {% set seoTitle = 'Press' %}
+  {% set pressCoverage = craft.entries.section('pressCoverage') %}
+  {% set category = null %}
+{% endif %}
+{% set child = null %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-3">
+          <nav>
+            {% include "_includes/category-nav.html" with {categoryGroup:'press'} %}
+            {% if category is defined %}
+                <a href="{{siteUrl}}press/press-releases">Press Release</a>
+            {% endif %}
+          </nav>
+        </div>
+        <div class="col-md-6">
+          {% if pressCoverage | length > 0%}
+            <h1>{{ category }}</h1>
+          {% endif %}
+          {% if pressCoverage | length %}
+          {% paginate pressCoverage.limit(10) as pressEntries %}
+            {% for pressCoverageEntry in pressEntries %}
+            <article>
+              <a href="{{pressCoverageEntry.externalLink}}" target="_blank">
+                <div class="card">
+                    {% if pressCoverageEntry.publicationImage | length %}
+                        <img class="card-img-top" src="{{ pressCoverageEntry.publicationImage.first().getUrl('thumb')}}" alt="Housing Works">
+                    {% endif %}
+                  <div class="card-block">
+                    <h4 class="card-title">{{ pressCoverageEntry.title }}</h4>
+                    {{ pressCoverageEntry.body }}
+                      {% for category in pressCoverageEntry.pressCategory %}
+                        <a class="card-link" href="{{category.url}}">{{category}}</a>{% if not loop.last %} /{% endif %} 
+                      {% endfor %}
+                    <p class="card-text">{{pressCoverageEntry.date | date("F d, Y")}}</p>
+                  </div>
+                </div>
+              </a>
+              </article>
+            {% endfor %}
+           {% include "_includes/pagination-pages.html" %}
+          {% endpaginate %}
+        {% endif %}
+        </div>
+          <div class="col-md-3">
+            <div class="card card-block">
+              <aside>
+                {% set press = craft.entries.section('press').first() %}
+                <h4 class="card-title">{{ press.contactName }}</h4>
+                <p class="card-text">{{ press.contactTitle }}</p>
+                <a href="mailto:{{press.contactEmail}}" class="card-link">{{ press.contactEmail }}</a><br>
+                <a href="#" class="card-link">{{ press.contactPhone }}</a>
+              </aside>
+            </div>
+          </div>
+    </div>
+    <div class="row">
+      <div class="col-md-9 offset-md-3">
+        <section class="releases">
+          <h1>Recent Press Releases</h1>
+          {% for pressReleaseEntry in craft.entries.section('pressRelease').limit(5) %}
+            <article>
+              <a href="{{ pressReleaseEntry.url }}">
+                <div class="card">
+                    {% if pressReleaseEntry.publicationImage | length %}
+                        <img class="card-img-top img-fluid" src="{{ pressReleaseEntry.publicationImage.first().getUrl('thumb')}}" alt="Housing Works">
+                    {% endif %}
+                  <div class="card-block">
+                    <h4 class="card-title">{{ pressReleaseEntry.title }}</h4>
+                    <p class="card-text">Posted at {{pressReleaseEntry.date.getTimestamp()| date(" F d, Y h:i A")}}</p>
+                  </div>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </section>
+    </div>
+  </div>
+{% endblock %}

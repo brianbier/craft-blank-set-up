@@ -1,0 +1,27 @@
+ <ul>
+                {% set snapchat = 'link goes here' %}
+                {% if seomaticSocial.twitterHandle %}
+                  <li> <a href="https://twitter.com/{{seomaticSocial.twitterHandle}}" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {%if seomaticSocial.facebookHandle %}
+                  <li><a href="https://www.facebook.com/{{seomaticSocial.facebookHandle}}" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if seomaticSocial.googlePlusHandle %}
+                  <li><a href="https://plus.google.com/u/0/{{seomaticSocial.googlePlusHandle}}" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+                {% endif %}
+                
+                {%if seomaticSocial.linkedInHandle %}
+                  <li><a href="https://www.linkedin.com/company/{{seomaticSocial.linkedInHandle}}" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if seomaticSocial.youtubeHandle %}
+                  <li><a href="https://www.youtube.com/channel/{{seomaticSocial.youtubeHandle}}" target="_blank"><i class="fa fa-youtube-play" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if seomaticSocial.instagramHandle%}
+                  <li><a href="https://www.instagram.com/{{seomaticSocial.instagramHandle}}" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                {% endif %}
+                {% if seomaticSocial.pinterestHandle %}
+                  <li><a href="https://www.pinterest.com/{{seomaticSocial.pinterestHandle}}" target="_blank"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
+                {% elseif  snapchat != '' %}
+                  <li><a href="{{snapchat}}" target="_blank"><i class="fa fa-snapchat-ghost" aria-hidden="true"></i></a></li>
+                {% endif %}
+              </ul>

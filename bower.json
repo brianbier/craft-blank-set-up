@@ -1,0 +1,10 @@
+{
+  "name": "housingworks",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "animate.css": "~3.2.0",
+    "bootstrap": "v4.0.0-alpha.3",
+    "flickity": "^2.0.2"
+  }
+}

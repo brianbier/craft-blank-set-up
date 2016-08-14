@@ -1,0 +1,79 @@
+{% extends '_layout' %}
+{% set careerEntry =  entry ?? craft.entries.section('career').first() %}
+
+{% if category is defined %}
+  {% set careers = craft.entries.section('careerJob').relatedTo(category) %}
+  {% set seoTitle = category.title %}
+{% else %}
+  {% set careers = craft.entries.section('careerJob') %}
+  {% set category = null %}
+{% endif %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-3">
+    {% include '_includes/category-nav.html' with {categoryGroup: 'career'}%}
+    </div>
+    <div class="col-md-5">
+     <section>
+          <div id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Working Here
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                {{careerEntry.workingHere}}
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Values
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                {{careerEntry.values}}
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Benefits
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                {{careerEntry.benefits}}
+              </div>
+            </div>
+          </div>
+      </section>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 offset-md-3""> 
+    <hr>
+      <ul class="media-list">
+      {% for job in careers %}
+        <li class="media">
+          <div class="media-body">
+            <a href="{{job.url}}"><h2>{{job.title}}</h2></a>
+          </div>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+
+

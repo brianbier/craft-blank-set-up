@@ -1,0 +1,94 @@
+{% extends '_layout' %}
+{% set todayStartDate = "now"|date_modify("midnight") %}
+{% set todayEndDate = "now"|date_modify("+1 day")|date_modify("midnight") %}
+
+{% if category is defined %}
+  {%set seoTitle = category.title %}
+  {% set events = craft.entries.section('events').relatedTo(category) %}
+{% else %}
+  {% set seoTitle = 'Events' %}
+  {% set events = craft.entries.section('events') %}
+  {% set category = null %}
+{% endif %}
+{# Will try to implement this. #}
+{# {% set featuredEventImages = [] %}
+{% for imgUrl in featuredEvents.featuredEvents%}
+  {% set featuredEventImages = featuredEventImages| merge([imgUrl.featureImages.first()]) %}
+{% endfor %} #}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-3">
+    {% include "_includes/category-nav.html" with {categoryGroup: 'events'} %} 
+  </div>
+  <div class="col-md-6">
+      {% if category %}
+          <h1>{{category.title}}</h1>
+      {% endif %}
+
+    {% if featuredEvents.featuredEvents | length %}
+     {% include "_includes/flickity-slider.html" with {images: featuredEvents.featuredEvents} %}
+    {% endif %}
+    {% set todayEvents = events.startDate("<=" ~ todayEndDate.timestamp).endDate(">=" ~ todayStartDate.timestamp ) %}
+
+    {% if todayEvents | length %}
+      {% paginate todayEvents.limit(2) as todayEntries %}
+        {% for event in todayEntries %}
+          {% if loop.index == 1%}
+            <h1> Today at  Housing Works </h1>
+          {% endif %}
+          <article>
+              <div class="card">
+                <div class="card-block">
+                  <a href="{{event.url}}" class="card-link">
+                    <h4 class="card-title">{{ event.title }}</h4>
+                  </a>
+                  <p class="card-text">{{event.startDate | date("l, F d, Y g:i a")}} - {{event.endDate | date("l, F d, Y g:i a")}}</p>
+                  {{ event.body }}
+                    {% for category in event.eventCategory %}
+                      <a class="card-link" href="{{category.url}}">{{category}}</a>{% if not loop.last %} /{% endif %} 
+                    {% endfor %}
+                      <p class="card-text">
+                        {{ event.addressSmartMap.street1}}<br>
+                        {{ event.addressSmartMap.city}},
+                        {{event.addressSmartMap.state}},
+                        {{event.addressSmartMap.zip}}
+                      </p>
+                </div>
+              </div>
+          </article>
+        {% endfor %}
+            {% include "_includes/pagination-pages.html" %}
+      {% endpaginate %}
+    {% endif %}
+      {% set upcomingEvents = events.endDate(">=" ~ todayEndDate.timestamp ).order('startDate asc') %}
+
+      {% for upcommingEventEntry in upcomingEvents.limit(3) %}
+        {% if loop.index == 1%}
+          <h1>Upcoming Events</h1>
+        {% endif %}
+        <article>
+              <div class="card">
+                <div class="card-block">
+                  <a href="{{ upcommingEventEntry.url }}" class="card-link">
+                    <h4 class="card-title">{{ upcommingEventEntry.title }}</h4>
+                  </a>
+                  <p class="card-text">{{ upcommingEventEntry.startDate | date("l, F d, Y g:i a")}} - {{ upcommingEventEntry.endDate | date("l, F d, Y g:i a")}}</p>
+                  {{ upcommingEventEntry.body }}
+                    {% for category in upcommingEventEntry.eventCategory %}
+                      <a class="card-link" href="{{category.url}}">{{category}}</a>{% if not loop.last %} /{% endif %} 
+                    {% endfor %}
+                      <p class="card-text">
+                        {{ upcommingEventEntry.addressSmartMap.street1 }}<br>
+                        {{ upcommingEventEntry.addressSmartMap.city }},
+                        {{ upcommingEventEntry.addressSmartMap.state }},
+                        {{ upcommingEventEntry.addressSmartMap.zip }}
+                      </p>
+                </div>
+              </div>
+
+        </article>
+      {% endfor %}    
+          </div>
+        </div>
+        {% endblock %}

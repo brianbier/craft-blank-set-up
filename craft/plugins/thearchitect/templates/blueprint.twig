@@ -1,0 +1,224 @@
+{% extends "_layouts/cp" %}
+{% set title = "The Architect"|t %}
+
+{% import "_includes/forms" as forms %}
+
+{% set tabs = {
+    tab1: { label: "Raw Input"|t, url: url('thearchitect') },
+    tab2: { label: "Available Files"|t, url: url('thearchitect/files') },
+    tab3: { label: "Export"|t, url: url('thearchitect/blueprint') },
+    tab4: { label: "Matrix to Neo Export"|t, url: url('thearchitect/convert') },
+} %}
+
+{% set selectedTab = 'tab3' %}
+
+{% set content %}
+    <form class="field toolbar" action="" method="post" accept-charset="UTF-8">
+        <input type="hidden" name="action" value="theArchitect/constructblueprint">
+        {{ getCsrfInput() }}
+        <h1>Fields</h1>
+        <table class="data fullwidth collapsible">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="field checkboxfield">
+                            <input type="checkbox" id="allFields" class="checkbox" name="allFields" value="all"><label for="allFields"></label>
+                            Name
+                        </div>
+                    </th>
+                    <th>Handle</th>
+                    <th>Type</th>
+                    <th>Group</th>
+                </tr>
+            </thead>
+            <tbody class="fields">
+                {% for field in craft.fields.getAllFields() %}
+                {% set utilizedFields = {} %}
+                {% if field.type == 'Neo' %}
+                    {% for blockType in craft.theArchitect.getNeoBlockTypesByFieldId(field.id) %}
+                        {% for blockTab in blockType.getFieldLayout().getTabs() %}
+                            {% for tabField in blockTab.getFields() %}
+                                {% set utilizedFields = utilizedFields | merge([tabField.fieldId]) %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+                <tr class="field" data-id="{{ field.id }}" data-groupid="{{ field.group.id }}" data-name="{{ field }}" data-fields="{% for id in utilizedFields %}{{ id }} {% endfor %}">
+                    <th scope="row" class="name">
+                        <div class="field checkboxfield">
+                            <input type="checkbox" id="field{{ field.id }}" class="checkbox" name="fieldSelection[]" value="{{ field.id }}"> <label for="field{{ field.id }}">{{ field }}</label>
+                        </div>
+                    </th>
+                    <td>
+                        <code>{{ field.handle }}</code>
+                    </td>
+                    <td>
+                        {{ field.type }}
+                    </td>
+                    <td>
+                        {{ field.group }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <h1>Sections</h1>
+        <table class="data fullwidth collapsible">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="field checkboxfield">
+                            <input type="checkbox" id="allSections" class="checkbox" name="allSections" value="all"><label for="allSections"></label>
+                            Name
+                        </div>
+                    </th>
+                    <th>Handle</th>
+                    <th>Type</th>
+                    <th>URL Format</th>
+                </tr>
+            </thead>
+            <tbody class="sections">
+                {% for section in craft.sections.getAllSections() %}
+                {% set utilizedFields = {} %}
+                {% for entryType in section.getEntryTypes() %}
+                    {% for fieldId in craft.fields.getLayoutById(entryType.fieldLayoutId).getFieldIds() %}
+                        {% set utilizedFields = utilizedFields | merge([fieldId]) %}
+                    {% endfor %}
+                {% endfor %}
+                <tr class="section" data-id="{{ section.id }}" data-name="{{ section }}" data-fields="{% for id in utilizedFields %}{{ id }} {% endfor %}">
+                    <th scope="row" class="name">
+                        <div class="section checkboxsection">
+                            <input type="checkbox" id="section{{ section.id }}" class="checkbox" name="sectionSelection[]" value="{{ section.id }}"> <label for="section{{ section.id }}">{{ section }}</label>
+                        </div>
+                    </th>
+                    <td>
+                        <code>{{ section.handle }}</code>
+                    </td>
+                    <td>
+                        {{ section.type }}
+                    </td>
+                    <td>
+                        {{ section.urlFormat }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <h1>Sources</h1>
+        <table class="data fullwidth collapsible">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="field checkboxfield">
+                            <input type="checkbox" id="allAssetSources" class="checkbox" name="allAssetSources" value="all"><label for="allAssetSources"></label>
+                            Name
+                        </div>
+                    </th>
+                    <th>Handle</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody class="assetSources">
+                {% for assetSource in assetSources %}
+                {% set utilizedFields = {} %}
+                {% for sourceTab in assetSource.getFieldLayout().getTabs() %}
+                    {% for tabField in sourceTab.getFields() %}
+                        {% set utilizedFields = utilizedFields | merge([tabField.fieldId]) %}
+                    {% endfor %}
+                {% endfor %}
+                <tr class="assetSource" data-id="{{ assetSource.id }}" data-name="{{ assetSource }}" data-fields="{% for id in utilizedFields %}{{ id }} {% endfor %}">
+                    <th scope="row" class="name">
+                        <input type="checkbox" id="assetSource{{ assetSource.id }}" class="checkbox" name="assetSourceSelection[]" value="{{ assetSource.id }}"> <label for="assetSource{{ assetSource.id }}">{{ assetSource }}</label>
+                    </th>
+                    <td>
+                        <code>{{ assetSource.handle }}</code>
+                    </td>
+                    <td>
+                        {{ assetSource.type }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <h1>Transforms</h1>
+        <table class="data fullwidth collapsible">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="field checkboxfield">
+                            <input type="checkbox" id="allAssetTransforms" class="checkbox" name="allAssetTransforms" value="all"><label for="allAssetTransforms"></label>
+                            Name
+                        </div>
+                    </th>
+                    <th>Handle</th>
+                    <th>Mode</th>
+                    <th>Dimensions</th>
+                    <th>Format</th>
+                </tr>
+            </thead>
+            <tbody class="assetTransforms">
+                {% for assetTransform in assetTransforms %}
+                <tr>
+                    <th scope="row" class="name">
+                        <input type="checkbox" id="assetTransform{{ assetTransform.id }}" class="checkbox" name="assetTransformSelection[]" value="{{ assetTransform.id }}"> <label for="assetTransform{{ assetTransform.id }}">{{ assetTransform }}</label>
+                    </th>
+                    <td>
+                        <code>{{ assetTransform.handle }}</code>
+                    </td>
+                    <td>
+                        {{ assetTransform.mode }}
+                    </td>
+                    <td>
+                        {{ assetTransform.width }} &times; {{ assetTransform.height }}
+                    </td>
+                    <td>
+                        {{ (assetTransform.format) ? assetTransform.format : 'auto' }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <h1>Globals</h1>
+        <table class="data fullwidth collapsible">
+            <thead>
+                <tr>
+                    <th>
+                        <div class="field checkboxfield">
+                            <input type="checkbox" id="allGlobals" class="checkbox" name="allGlobals" value="all"><label for="allGlobals"></label>
+                            Name
+                        </div>
+                    </th>
+                    <th>Handle</th>
+                </tr>
+            </thead>
+            <tbody class="globals">
+                {% for global in craft.globals.getAllSets() %}
+                {% set utilizedFields = {} %}
+                {% for sourceTab in global.getFieldLayout().getTabs() %}
+                    {% for tabField in sourceTab.getFields() %}
+                        {% set utilizedFields = utilizedFields | merge([tabField.fieldId]) %}
+                    {% endfor %}
+                {% endfor %}
+                <tr class="global" data-id="{{ global.id }}" data-name="{{ global }}" data-fields="{% for id in utilizedFields %}{{ id }} {% endfor %}">
+                    <th scope="row" class="name">
+                        <input type="checkbox" id="global{{ global.id }}" class="checkbox" name="globalSelection[]" value="{{ global.id }}"> <label for="global{{ global.id }}">{{ global }}</label>
+                    </th>
+                    <td>
+                        <code>{{ global.handle }}</code>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <div class="buttons">
+            <input type="submit" class="btn submit export-btn" value="Export Selected">
+            <input type="submit" class="btn submit disabled export-btn" disabled="" value="Export All">
+        </div>
+    </form>
+
+{% endset %}

@@ -1,0 +1,73 @@
+{% extends '_layout'%}
+
+{% set days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] %}
+{% set seoTitle = entry.title %}
+{% set seoDescription = entry.body %}
+{% set category = null %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-3">
+       {% include "_includes/category-nav.html" with {categoryGroup:'locations'}%}
+    </div>
+  <div class="col-md-6">
+    <article>
+      <div class="card card-block">
+        <a href="{{ entry.url }}"><h3 class="card-title">{{ entry.title }}</h3></a>
+        {{ entry.body }}
+        <p>
+          {{ entry.addressSmartMap.street1}}<br />
+          {{ entry.addressSmartMap.city}},
+          {{entry.addressSmartMap.state}},
+          {{entry.addressSmartMap.zip}}<br />
+          {{ entry.contactPhone }}
+        </p>
+
+        {% for dayHours in entry.storeHours %}
+          <p>
+            {{ days[loop.index0] }}: 
+            {% if dayHours.open| length %} 
+                {{ dayHours.open| date("g:i a") }} - {{ dayHours.close|date("g:i a") }}
+            {% else %}
+                CLOSED
+            {% endif %}
+          </p>
+        {% endfor %}
+        <hr>
+        {% for matrixBlock in entry.transportationMatrix %}
+          {% switch matrixBlock.type %}
+          
+            {% case "subwayTrain" %}
+            <ul class="train-images">
+              {% for image in matrixBlock.trainImage %}
+              <li><img src="{{ image.url }}"></li>  
+              {% endfor %}
+            </ul>
+              {{matrixBlock.trainDescription}}
+          {% endswitch %}
+        {% endfor %}
+
+        <a href="http://maps.google.com/maps?f=d&amp;saddr=&amp;daddr={{entry.addressSmartMap}}&amp;hl=en&amp;geocode=&amp;mra=ls" target="_blank" class="btn btn-primary">Directions</a>
+      </div>
+    </article>
+  </div>
+  <div class="col-md-3">
+      {% set options = {
+          height: 500,
+          zoom: 16,
+          draggable: true,
+          scrollwheel: true,
+          infoWindowOptions: {
+          maxWidth: 200
+        }
+      } %}
+  <aside>
+    {{ craft.smartMap.map(entry.addressSmartMap, options) }}
+  </aside>
+
+  </div>
+    
+  </div>
+{% endblock %}
+
+

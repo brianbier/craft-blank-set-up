@@ -1,0 +1,55 @@
+{% extends '_layout' %}
+
+{% if category is defined %}
+  {% set blogs = craft.entries.section('blogs').relatedTo(category) %}
+{% else %}
+  {% set blogs = craft.entries.section('blogs') %}
+  {% set category = null %}
+{% endif %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-3">
+  {% include "_includes/category-nav.html" with {categoryGroup: 'blogs'} %} 
+  </div>
+  <div class="col-md-6">
+    {% paginate blogs.limit(10) as blogEntries %}
+    {% if paginate.currentPage == 1 or paginate.totalPages == 0 %}
+      
+      {% if category %}
+        <section>
+          <a href="{{ category.url }}"><h1>{{ category.title }}</h1></a>
+            {% if category.featureImages | length %}
+            {% include "_includes/flickity-slider.html" with {images: category.featureImages  } %} 
+            {% endif %}
+          {{ category.body }}
+          {% if category.matrix | length %}
+            {% include "_includes/matrix.html" with {type: category} %} 
+          {% endif %}
+        </section>
+      {% endif %}
+  {% endif %}
+    {% if blogs | length%}
+      <div class="container">
+        <h1>{{ category ?"Related Blog Posts": "Blog Posts" }}</h1>
+      </div>
+    {% endif %}
+      <br>
+      {% for blog in blogEntries %}
+        <article>
+          <div class="container">
+            <a href="{{ blog.url }}">
+              <h2>{{ blog.title }}</h2>
+            </a>
+            <img src="{{ blog.featureImages.first().getUrl('thumb')}}" class="img-fluid">
+            {{ blog.body }}
+            <a href="{{ blog.url }}">Continue reading</a>
+            <p>{{blog.date | date("F d, Y")}}</p>
+          </div>
+        </article>
+      {% endfor %}
+      {% include "_includes/pagination-pages.html" %}
+    {% endpaginate %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<nav>
+  <ul class="nav nav-pills nav-stacked">
+
+  <li class="nav-item">
+    <a href="/{{craft.request.firstSegment}}" class="nav-link {{  category == null  ? 'active' : ''}}">
+      All
+    </a>
+  </li>
+    {% for categoryLink in craft.categories.group(categoryGroup).level(1) %}
+     <li class="nav-item">
+      <a href="{{categoryLink.url}}" class="nav-link {{ category and category.slug == categoryLink.slug ? 'active' : '' }}">
+        {{categoryLink.title}}
+      </a>
+        {% if categoryLink.children|length %}
+          <ul>
+            {% for child in categoryLink.children %}
+               <li class="nav-item"><a href="{{ child.url }}" class="nav-link {{ child.slug == child  ? 'active'}}">{{ child }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+</ul>   
+</nav>
+  

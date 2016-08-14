@@ -1,0 +1,12 @@
+  {% for matrixBlock in type.matrix %}
+      {% switch matrixBlock.type %}
+
+      {% case "text" %}
+        {{ matrixBlock.text }}
+
+      {% case "slideShow" %}
+        {% include "_includes/flickity-slider.html" with {images: matrixBlock.slideShow} %}
+      {% case "singleImage" %}
+          <img src="{{ matrixBlock.singleImage.first().url }}" class="img-fluid" />
+      {% endswitch %}
+  {% endfor %}

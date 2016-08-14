@@ -1,0 +1,37 @@
+{% extends '_layout' %}
+{% set seoTitle = 'Volunteer' %}
+
+{% block content %}
+  <div class="row">
+        <div class="col-md-3">
+            {% include "_includes/entry-nav.html" with {entrySection: 'volunteer'} %} 
+        </div>
+      <div class="col-md-9">
+        <h1>Give a second chance, volunteer!</h1>
+        <div class="row">
+          {% for volunteerEntry in craft.entries.section('volunteer') %}
+            <article>
+              <div class="col-md-6">  
+                  <div class="card card-block">
+                    <a href="{{ volunteerEntry.url }}">
+                      <h4 class="card-title">
+                        {{ volunteerEntry.title }}
+                      </h4>
+                    {% if volunteerEntry.image | length %}
+                      <img src="{{ volunteerEntry.image.first().getUrl('thumb')}}" alt="">
+                    {% endif %}
+                    </a>
+                    {% set paragraphs = volunteerEntry.body | split('.')%}
+                    {% set firstParagraph = paragraphs | first ~ '.' %}
+                    {{firstParagraph | raw}}
+                  </div>
+              </div> 
+            {% if loop.index is even %}
+              <div class="clearfix"></div>
+            {% endif %} 
+           </article> 
+          {% endfor %}
+        </div>
+      </div>
+  </div>  
+{% endblock %}

@@ -1,0 +1,25 @@
+<section>
+{% if images | length == 1%}
+  <img src="{{images.first().url}}" class="img-fluid">
+{% else %}
+
+<div class="main-carousel">
+  {% for feature in images %}
+  <div class="carousel-cell">
+      {% if feature.featureImages | length %}
+        <div class="cell-inner" style="background-image:url('{{feature.featureImages.first().url()}}');">
+              <a href="{{ feature.url }}">
+                <h2>{{ feature.title }}<br>
+                {{ feature.startDate  | date("l, F d, Y g:i a") }}
+                </h2>
+              </a>
+        </div>
+      {% else %}
+        <div class="cell-inner" style="background-image:url('{{feature.url()}}');">
+        </div>
+      {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+</section>
